@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 import sql from './config/db.js';
 import rateLimiter from './middlewere/rateLimiter.js';
+import authBypass from './middlewere/authBypass.js';
 const app = express();  
 import transactionRoute from './routes/transactionRoute.js';
 import job from './config/cron.js';
@@ -15,6 +16,7 @@ if(process.env.NODE_ENV === 'production') {
 //middleware
 app.use(rateLimiter);
 app.use(express.json());
+app.use(authBypass);
 //
 //app.use((req,res, next) => {
 //    console.log("Hey we hit a req, the method is ", req.method);
