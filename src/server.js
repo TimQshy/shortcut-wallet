@@ -1,0 +1,45 @@
+import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+import sql from './config/db.js';
+import rateLimiter from './middlewere/rateLimiter.js';
+const app = express();  
+import transactionRoute from './routes/transactionRoute.js';
+
+//middleware
+app.use(rateLimiter);
+app.use(express.json());
+//
+//app.use((req,res, next) => {
+//    console.log("Hey we hit a req, the method is ", req.method);
+//    next()
+//});
+
+
+const PORT = process.env.PORT
+
+async function initDB() {
+    try {
+        await sql`CREATE TABLE IF NOT EXISTS transactions (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(250) NOT NULL,
+        title VARCHAR(250) NOT NULL,
+        amount DECIMAL(10, 2) NOT NULL,
+        category VARCHAR(250) NOT NULL, 
+        created_at DATE NOT NULL DEFAULT CURRENT_DATE)`;
+        console.log('server initialized successfully');
+    } catch (error) {
+        console.error('Error initializing server:', error);
+        process.exit(1); // status code 1 means error 0 means success
+    }
+}
+
+
+
+app.use('/api/transactions', transactionRoute);
+ 
+initDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("Server is running on port: "+ PORT);
+    });
+});
