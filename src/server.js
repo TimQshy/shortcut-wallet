@@ -5,6 +5,12 @@ import sql from './config/db.js';
 import rateLimiter from './middlewere/rateLimiter.js';
 const app = express();  
 import transactionRoute from './routes/transactionRoute.js';
+import job from './config/cron.js';
+
+dotenv.config();
+if(process.env.NODE_ENV === 'production') {
+    job.start();
+}
 
 //middleware
 app.use(rateLimiter);
@@ -17,6 +23,10 @@ app.use(express.json());
 
 
 const PORT = process.env.PORT
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 
 async function initDB() {
     try {
