@@ -6,11 +6,14 @@ import rateLimiter from './middlewere/rateLimiter.js';
 import authBypass from './middlewere/authBypass.js';
 const app = express();  
 import transactionRoute from './routes/transactionRoute.js';
-import job from './config/cron.js';
+import voiceRoute from './routes/voiceRoute.js';
+import botRoute from './routes/botRoute.js';
+import job, { nightlyJob } from './config/cron.js';
 
 dotenv.config();
 if(process.env.NODE_ENV === 'production') {
     job.start();
+    nightlyJob.start();
 }
 
 //middleware
@@ -49,6 +52,8 @@ async function initDB() {
 
 
 app.use('/api/transactions', transactionRoute);
+app.use('/api/voice', voiceRoute);
+app.use('/api/telegram', botRoute);
  
 initDB().then(() => {
     app.listen(PORT, () => {

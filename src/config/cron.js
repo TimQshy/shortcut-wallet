@@ -1,5 +1,6 @@
 import cron from "cron";
 import https from "https";
+import { sendTelegramMessage } from "../services/telegram.js";
 
 const job = new cron.CronJob("*/14 * * * *", function () {
   https
@@ -8,6 +9,17 @@ const job = new cron.CronJob("*/14 * * * *", function () {
       else console.log("GET request failed", res.statusCode);
     })
     .on("error", (e) => console.error("Error while sending request", e));
+});
+
+// Ночное напоминание в 21:00 по МСК (18:00 UTC)
+export const nightlyJob = new cron.CronJob("0 18 * * *", function () {
+  const messages = [
+    "Вечер добрый! 🌙 Не забыл записать сегодняшние траты?",
+    "Пора подвести финансовые итоги дня! Что купил сегодня? 💸",
+    "Эй, как там твой бюджет? Напиши расход прямо сюда! 📊",
+  ];
+  const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+  sendTelegramMessage(`🛎 <b>Напоминание</b>\n\n${randomMsg}`);
 });
 
 export default job;
