@@ -10,8 +10,8 @@ export async function handleVoiceInput(req, res) {
         const user_id = req.auth?.userId;
         if (!user_id) return res.status(401).json({ message: 'Не авторизован' });
 
-        const { title, amount, category } = await parseExpenseText(text);
-        const normalizedAmount = amount > 0 ? -Math.abs(amount) : amount;
+        const { title, amount, category, type } = await parseExpenseText(text);
+        const normalizedAmount = type === 'income' ? Math.abs(amount) : -Math.abs(amount);
 
         await sql`
             INSERT INTO transactions(user_id, title, amount, category)
