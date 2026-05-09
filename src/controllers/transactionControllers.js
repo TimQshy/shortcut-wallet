@@ -48,6 +48,31 @@ export async function deleteTransaction(req, res) {
         res.status(500).json({ message: "Internal server error" });
     }   
 }
+export async function updateTransaction(req, res) {
+    try {
+        const { id } = req.params;
+        if (isNaN(id)) return res.status(400).json({ message: "Invalid transaction id" });
+
+        const { title, amount, category } = req.body;
+
+        const result = await sql`
+            UPDATE transactions
+            SET
+                title    = COALESCE(${title    ?? null}, title),
+                amount   = COALESCE(${amount   ?? null}, amount),
+                category = COALESCE(${category ?? null}, category)
+            WHERE id = ${id}
+            RETURNING *
+        `;
+
+        if (result.length === 0) return res.status(404).json({ message: "Transaction not found" });
+        res.status(200).json(result[0]);
+    } catch (error) {
+        console.error("Error updating transaction:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 export async function getSummary(req, res) {
     try {
         const { userId } = req.params;
