@@ -1,18 +1,29 @@
-const GEMINI_URL = (key) =>
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+const MODELS = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+
+const GEMINI_URL = (key, model) =>
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
 
 async function callGemini(key, systemPrompt, contents, tools) {
     const body = { contents };
     if (systemPrompt) body.system_instruction = { parts: [{ text: systemPrompt }] };
     if (tools) body.tools = tools;
 
-    const res = await fetch(GEMINI_URL(key), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error('Gemini error: ' + await res.text());
-    return res.json();
+    for (const model of MODELS) {
+        const res = await fetch(GEMINI_URL(key, model), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        if (res.ok) return res.json();
+        const errText = await res.text();
+        // Если перегружен или недоступен — пробуем следующую модель
+        if (res.status === 503 || res.status === 429) {
+            console.warn(`${model} unavailable, trying next...`);
+            continue;
+        }
+        throw new Error('Gemini error: ' + errText);
+    }
+    throw new Error('Все модели Gemini недоступны, попробуй позже.');
 }
 
 // ── Bot Agent ─────────────────────────────────────────────────────────────────
