@@ -8,7 +8,6 @@ const app = express();
 import transactionRoute from './routes/transactionRoute.js';
 import voiceRoute from './routes/voiceRoute.js';
 import botRoute from './routes/botRoute.js';
-import budgetRoute from './routes/budgetRoute.js';
 import accountRoute from './routes/accountRoute.js';
 import notesRoute from './routes/notesRoute.js';
 import job, { nightlyJob } from './config/cron.js';
@@ -73,7 +72,6 @@ async function initDB() {
 app.use('/api/transactions', transactionRoute);
 app.use('/api/voice', voiceRoute);
 app.use('/api/telegram', botRoute);
-app.use('/api/budget', budgetRoute);
 app.use('/api/accounts', accountRoute);
 app.use('/api/notes', notesRoute);
  
