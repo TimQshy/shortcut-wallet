@@ -10,6 +10,7 @@ import voiceRoute from './routes/voiceRoute.js';
 import botRoute from './routes/botRoute.js';
 import accountRoute from './routes/accountRoute.js';
 import notesRoute from './routes/notesRoute.js';
+import pdfRoute from './routes/pdfRoute.js';
 import job, { nightlyJob } from './config/cron.js';
 
 dotenv.config();
@@ -74,6 +75,7 @@ app.use('/api/voice', voiceRoute);
 app.use('/api/telegram', botRoute);
 app.use('/api/accounts', accountRoute);
 app.use('/api/notes', notesRoute);
+app.use('/api/pdf', pdfRoute);
  
 initDB().then(() => {
     app.listen(PORT, () => {
