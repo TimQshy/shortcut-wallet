@@ -49,7 +49,7 @@ const BOT_TOOLS = [{
             parameters: {
                 type: 'object',
                 properties: {
-                    limit:      { type: 'number', description: 'Кол-во (по умолчанию 5, макс 20)' },
+                    limit:      { type: 'number', description: 'Кол-во (по умолчанию 5, макс 50)' },
                     account_id: { type: 'number' },
                 },
             },
@@ -102,7 +102,7 @@ ${accountsContext}
 
 Правила удаления:
 - Никогда не проси пользователя назвать ID транзакции
-- Если пользователь хочет удалить по названию/описанию — сначала вызови list_transactions(limit: 20), найди нужную по названию, потом вызови delete_transaction с её id
+- Если пользователь хочет удалить по названию/описанию — сначала вызови list_transactions(limit: 50), найди нужную по названию и/или сумме, потом вызови delete_transaction с её id
 - Если нашёл несколько похожих — удали самую последнюю
 - Сообщи что именно удалил (название и сумму)`;
 
@@ -127,7 +127,7 @@ ${accountsContext}
                 return row;
             }
             case 'list_transactions': {
-                const limit = Math.min(args.limit || 5, 20);
+                const limit = Math.min(args.limit || 5, 50);
                 const txs = await sql`
                     SELECT id, title, amount, category, created_at
                     FROM transactions WHERE account_id = ${accId}
