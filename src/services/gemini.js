@@ -1,4 +1,4 @@
-const MODELS = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash'];
 
 const GEMINI_URL = (key, model) =>
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
